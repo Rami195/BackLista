@@ -22,24 +22,27 @@ const getTasks = async (req, res, next) => {
     }
 };
 const createTasks = async (req, res, next) => {
-    try {
-      const { title, description } = req.body;
-      const image_url = req.file ? `/uploads/${req.file.filename}` : null;
-  
-      if (!title || !description) {
-        return res.status(400).json({ error: "Title and description are required" });
-      }
-  
-      const results = await pool.query(
-        "INSERT INTO task (title, description, image_url) VALUES ($1, $2, $3) RETURNING *",
-        [title, description, image_url]
-      );
-  
-      res.json(results.rows[0]);
-    } catch (error) {
-      next(error);
+  try {
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+
+    const { title, description } = req.body;
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+    if (!title || !description) {
+      return res.status(400).json({ error: "Title and description are required" });
     }
-  };
+
+    const results = await pool.query(
+      "INSERT INTO task (title, description, image_url) VALUES ($1, $2, $3) RETURNING *",
+      [title, description, image_url]
+    );
+
+    res.json(results.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 const deleteTasks = async (req, res, next) => {

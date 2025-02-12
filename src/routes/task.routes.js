@@ -7,7 +7,12 @@ const router = Router();
 
 router.get('/task', getAllTasks);
 router.get('/task/:id', getTasks);
-router.post('/task', upload.single('image'), createTasks);
+router.post('/task', upload.single('image'), (req, res, next) => {
+    if (!req.body.title || !req.body.description) {
+        return res.status(400).json({ message: "Title and description are required" });
+    }
+    next();
+}, createTasks);
 router.delete('/task/:id', deleteTasks);
 router.put('/task/:id', upload.single('image'), updateTasks);
 
